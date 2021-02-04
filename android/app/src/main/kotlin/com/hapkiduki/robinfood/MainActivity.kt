@@ -1,0 +1,6 @@
+package com.hapkiduki.robinfood
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
