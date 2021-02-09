@@ -27,6 +27,9 @@ class EmployeesPage extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
+          SizedBox(
+            height: Dimensions.height(context) * .02,
+          ),
           Expanded(
             child: AnimatedSwitcher(
               duration: Duration(milliseconds: 500),
@@ -67,7 +70,7 @@ class EmployeesPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _bodyUser(),
+                _bodyUser(context),
                 Text(
                   currency,
                   style: TextStyle(
@@ -83,25 +86,22 @@ class EmployeesPage extends StatelessWidget {
     );
   }
 
-  Widget _photo(int index, BuildContext context) => Hero(
-        tag: 'user_123-$index',
-        child: Stack(
-          children: [
-            CircleAvatar(
-              backgroundColor: CustomColors.yellow,
-              child: Text(
-                'EE',
-                style: TextStyle(
-                  color: CustomColors.blue,
-                  fontWeight: FontWeight.bold,
-                ),
+  Widget _photo(int index, BuildContext context) => Stack(
+        children: [
+          CircleAvatar(
+            backgroundColor: CustomColors.yellow,
+            child: Text(
+              'EE',
+              style: TextStyle(
+                color: CustomColors.blue,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       );
 
-  _bodyUser() {
+  _bodyUser(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -117,11 +117,18 @@ class EmployeesPage extends StatelessWidget {
             ),
           ),
         ),
-        Text(
-          'CEO',
-          style: TextStyle(
-            color: Colors.white38,
-            fontSize: 13,
+        Container(
+          padding: Dimensions.symetric(context, .02, .01),
+          decoration: BoxDecoration(
+            color: CustomColors.yellow,
+            borderRadius: Dimensions.borderRadiusContainer(10),
+          ),
+          child: Text(
+            'CEO',
+            style: TextStyle(
+              color: CustomColors.blue,
+              fontSize: 13,
+            ),
           ),
         ),
       ],

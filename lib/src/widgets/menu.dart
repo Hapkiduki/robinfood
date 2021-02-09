@@ -104,12 +104,12 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         children: [
           Icon(
             widget.items[i].icon,
-            color: CustomColors.light_yellow,
+            color: CustomColors.yellow,
           ),
           Text(
             widget.items[i].text,
             style: TextStyle(
-              color: CustomColors.light_yellow,
+              color: CustomColors.yellow,
             ),
           ),
         ],

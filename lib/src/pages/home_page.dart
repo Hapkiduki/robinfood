@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:robinfood/src/pages/employees_page.dart';
+
 import 'package:robinfood/src/utils/beat_animation.dart';
 import 'package:robinfood/src/utils/colors.dart';
-
 import 'package:robinfood/src/utils/dimensions.dart';
+
 import 'package:robinfood/src/widgets/menu.dart';
+
+import 'employees_page.dart';
+import 'employee_detail_page.dart';
 
 enum DragState {
   employee_detail,
@@ -23,6 +26,7 @@ class _HomePageState extends State<HomePage>
   AnimationController _controller;
 
   DragState _dragState = DragState.employees;
+  
   final List<MenuItem> _menuItems = [
     MenuItem(icon: Icons.list_alt, text: 'Employees'),
     MenuItem(icon: Icons.attribution_outlined, text: 'New employees'),
@@ -93,9 +97,7 @@ class _HomePageState extends State<HomePage>
               height: Dimensions.height(context),
               child: GestureDetector(
                 onVerticalDragUpdate: _onVerticalDrag,
-                child: Container(
-                  color: CustomColors.pink,
-                ),
+                child: EmployeesDetailPage(dragState: _dragState),
               ),
             ),
             AnimatedPositioned(
