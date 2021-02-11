@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:robinfood/src/providers/general_provider.dart';
 
 import 'package:robinfood/src/utils/beat_animation.dart';
 import 'package:robinfood/src/utils/colors.dart';
@@ -14,14 +16,12 @@ class MenuItem {
 class Menu extends StatefulWidget {
   final List<MenuItem> items;
   final ValueChanged<int> onChange;
-  final int selected;
 
-  const Menu(
-      {Key key,
-      @required this.items,
-      @required this.onChange,
-      this.selected = 0})
-      : super(key: key);
+  const Menu({
+    Key key,
+    @required this.items,
+    @required this.onChange,
+  }) : super(key: key);
 
   @override
   _MenuState createState() => _MenuState();
@@ -34,7 +34,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.selected ?? 0;
 
     controller = AnimationController(
         duration: Duration(milliseconds: 1000), vsync: this);
@@ -50,6 +49,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    _currentIndex = context.watch<GeneralProvider>().menuItem;
     return Container(
       height: Dimensions.height(context) * .07,
       child: Row(
@@ -58,11 +58,10 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
           widget.items.length,
           (i) => GestureDetector(
             onTap: () {
+              //var mi = ;
               if (i != _currentIndex) {
                 controller?.forward(from: 0);
-                setState(() {
-                  _currentIndex = i;
-                });
+                context.read<GeneralProvider>().menuItem = i;
 
                 widget.onChange(_currentIndex);
               }

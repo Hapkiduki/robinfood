@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:robinfood/src/providers/general_provider.dart';
 
 import 'package:robinfood/src/utils/beat_animation.dart';
 import 'package:robinfood/src/utils/colors.dart';
@@ -8,11 +11,6 @@ import 'package:robinfood/src/widgets/menu.dart';
 
 import 'employees_page.dart';
 import 'employee_detail_page.dart';
-
-enum DragState {
-  employee_detail,
-  employees,
-}
 
 class HomePage extends StatefulWidget {
   @override
@@ -25,13 +23,11 @@ class _HomePageState extends State<HomePage>
   double minHeight;
   AnimationController _controller;
 
-  DragState _dragState = DragState.employees;
-  
   final List<MenuItem> _menuItems = [
     MenuItem(icon: Icons.list_alt, text: 'Employees'),
     MenuItem(icon: Icons.attribution_outlined, text: 'New employees'),
   ];
-  Widget _currentPage;
+  Widget _currentPage = EmployeesPage();
 
   @override
   void initState() {
@@ -40,7 +36,7 @@ class _HomePageState extends State<HomePage>
       vsync: this,
       duration: Duration(milliseconds: 1500),
     );
-    _currentPage = EmployeesPage(dragState: _dragState);
+
     _controller?.forward();
   }
 
@@ -52,26 +48,24 @@ class _HomePageState extends State<HomePage>
 
   _onVerticalDrag(DragUpdateDetails details) {
     if (details.primaryDelta > 7) {
-      setState(() {
-        _dragState = DragState.employee_detail;
-      });
+      context.read<GeneralProvider>().dragState = DragState.employee_detail;
     } else if (details.primaryDelta < -4) {
-      setState(() {
-        _dragState = DragState.employees;
-      });
+      context.read<GeneralProvider>().dragState = DragState.employees;
     }
   }
 
-  double _getTopProfile() {
-    if (_dragState == DragState.employees) {
+  double _getTopDetail() {
+    var state = context.select((GeneralProvider gp) => gp.dragState);
+    if (state == DragState.employees) {
       return -maxHeight;
     } else {
       return -minHeight;
     }
   }
 
-  double _getTopUsers() {
-    if (_dragState == DragState.employees) {
+  double _getTopEmployees() {
+    var state = context.select((GeneralProvider gp) => gp.dragState);
+    if (state == DragState.employees) {
       return minHeight;
     } else {
       return maxHeight;
@@ -91,19 +85,19 @@ class _HomePageState extends State<HomePage>
             AnimatedPositioned(
               duration: Duration(milliseconds: 500),
               curve: Curves.easeInOutBack,
-              top: _getTopProfile(),
+              top: _getTopDetail(),
               left: 0,
               right: 0,
               height: Dimensions.height(context),
               child: GestureDetector(
                 onVerticalDragUpdate: _onVerticalDrag,
-                child: EmployeesDetailPage(dragState: _dragState),
+                child: EmployeesDetailPage(),
               ),
             ),
             AnimatedPositioned(
               duration: Duration(milliseconds: 500),
               curve: Curves.easeInOutBack,
-              top: _getTopUsers(),
+              top: _getTopEmployees(),
               left: 0,
               right: 0,
               height: Dimensions.height(context),
@@ -114,16 +108,21 @@ class _HomePageState extends State<HomePage>
             ),
             AnimatedPositioned(
               duration: Duration(milliseconds: 500),
-              child: AnimatedSwitcher(
-                duration: Duration(milliseconds: 500),
-                child: _dragState == DragState.employees
-                    ? Menu(
-                        items: _menuItems,
-                        onChange: (selected) {
-                          _controller.forward(from: 0);
-                        },
-                      )
-                    : SizedBox.shrink(),
+              child: Selector<GeneralProvider, DragState>(
+                selector: (_, gp) => gp.dragState,
+                builder: (context, state, child) {
+                  return AnimatedSwitcher(
+                    duration: Duration(milliseconds: 500),
+                    child: state == DragState.employees
+                        ? Menu(
+                            items: _menuItems,
+                            onChange: (selected) {
+                              _controller.forward(from: 0);
+                            },
+                          )
+                        : SizedBox.shrink(),
+                  );
+                },
               ),
               top: minHeight * .75,
               left: 0,
